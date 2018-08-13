@@ -138,7 +138,7 @@
         _.each(letters, function(letter, index, collection) {
           iterations.push([letter, index, collection]);
         });
-
+      
         expect(iterations).to.eql([
           ['a', 0, letters],
           ['b', 1, letters],
@@ -346,7 +346,7 @@
         var iterator = function(value) { return value === 1; };
         var numbers = [1, 2, 2, 3, 4, 4];
 
-        expect(_.uniq(FILL_ME_IN)).to.eql([1, 2]);
+        expect(_.uniq(numbers, true, iterator)).to.eql([1, 2]);
       });
 
       it('should produce a brand new array instead of modifying the input array', function() {
