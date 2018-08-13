@@ -126,6 +126,10 @@
     // the members, it also maintains an array of results.
 
     //Can take in an array or a dict
+
+    var results = [];
+    _.each(collection, function(x){results.push(iterator(x));})
+    return results
   };
 
   /*
@@ -167,6 +171,19 @@
   //   }); // should be 5, regardless of the iterator function passed in
   //          No accumulator is given so the first element is used.
   _.reduce = function(collection, iterator, accumulator) {
+    var lastResult = accumulator;
+    var skipFirst = false;
+    if (accumulator == undefined){
+      skipFirst = true;
+      lastResult = collection[0];
+    }
+
+    _.each(collection, function(x,index){
+      if (!(skipFirst == true && index === 0)){
+        lastResult = iterator(lastResult,x);
+      }
+    });
+    return lastResult;
   };
 
   // Determine if the array or object contains a given value (using `===`).
