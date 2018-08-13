@@ -100,16 +100,22 @@
     // TIP: see if you can re-use _.filter() here, without simply
     // copying code in and modifying it
 
-    _.filter(collection, function(element, test){
-        !test(element);
+    return _.filter(collection, function(element){
+        return !test(element);
     })
   };
 
   // Produce a duplicate-free version of the array.
-  _.uniq = function(array, isSorted, iterator) {
-
-    //make a dictionary from elements of array, where each element is a key
-    //return keys of dictionary
+  _.uniq = function(array, isSorted, iterator=function(x){return x;}) {
+    var seen = {};
+    var result = [];
+    for (var i = 0; i < array.length; i++){
+      if (!(iterator(array[i]) in seen)){
+        seen[iterator(array[i])] = true;
+        result.push(array[i]);
+      }
+    }
+    return result;
   };
 
 
