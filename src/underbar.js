@@ -191,23 +191,33 @@
     // TIP: Many iteration problems can be most easily expressed in
     // terms of reduce(). Here's a freebie to demonstrate!
     return _.reduce(collection, function(wasFound, item) {
-      if (wasFound) {
-        return true;
-      }
-      return item === target;
+      //if (wasFound) {
+        //return true;
+      //}
+      //return item === target;
+      return wasFound || (item === target);
     }, false);
   };
 
 
   // Determine whether all of the elements match a truth test.
-  _.every = function(collection, iterator) {
+  _.every = function(collection, iterator = _.identity) {
     // TIP: Try re-using reduce() here.
+    return _.reduce(collection, function(trueSoFar, item){
+      return trueSoFar && Boolean(iterator(item));
+    }, true);
   };
 
   // Determine whether any of the elements pass a truth test. If no iterator is
   // provided, provide a default one
-  _.some = function(collection, iterator) {
+  _.some = function(collection, iterator = _.identity) {
     // TIP: There's a very clever way to re-use every() here.
+    //Use _.every to check if every item in the collection fails the truth test
+    var allFalse = _.every(collection, function(item){
+      return !(iterator(item));
+    });
+    //As long as they don't all fail, i.e. allFalse is true, then return true
+    return !allFalse;
   };
 
 
@@ -229,12 +239,29 @@
   //   }, {
   //     bla: "even more stuff"
   //   }); // obj1 now contains key1, key2, key3 and bla
-  _.extend = function(obj) {
-  };
+  //source is old object, destination is new object
+  _.extend = function(destination, source) {
+
+    for (var i = 1; i < arguments.length; i++){
+      _.each(arguments[i], function(value, key) {
+        destination[key] = value;
+      });
+    };
+    return destination;
+    };
 
   // Like extend, but doesn't ever overwrite a key that already
   // exists in obj
-  _.defaults = function(obj) {
+  _.defaults = function(object, defaults) {
+
+    for (var i = 1; i < arguments.length; i++){
+      _.each(arguments[i], function(value, key) {
+        if (!(key in object)){
+          object[key] = value;
+        };
+      });
+    };
+    return object;
   };
 
 
@@ -266,6 +293,7 @@
       }
       // The new function always returns the originally computed result.
       return result;
+    
     };
   };
 
@@ -278,6 +306,21 @@
   // already computed the result for the given argument and return that value
   // instead if possible.
   _.memoize = function(func) {
+    //Create dictionary to store previous results with the argument(s) as key
+    var previousResults = {};
+    var previousKeys = [];
+    var result; 
+
+    return function() {
+      var currentKey = JSON.stringify(arguments);
+      if (currentKey in previousResults) {
+        result = previousResults[currentKey];
+      } else {
+          result = func.apply(this, arguments);
+          previousResults[currentKey] = result;
+        };
+      return result;
+    };
   };
 
   // Delays a function for the given number of milliseconds, and then calls
