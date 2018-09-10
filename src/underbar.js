@@ -61,8 +61,8 @@
         iterator(collection[index], index, collection);
       }
     } else {
-      for (var index in collection){
-        iterator(collection[index], index, collection);
+      for (var key in collection){
+        iterator(collection[key], key, collection);
       }
     }
   };
@@ -87,7 +87,7 @@
   // Return all elements of an array that pass a truth test.
   _.filter = function(collection, test) {
     var passingElements = [];
-    for (var i = 0; i<collection.length; i++){
+    for (var i = 0; i < collection.length; i++){
       if (test(collection[i])){
         passingElements.push(collection[i]);
       }
@@ -106,7 +106,7 @@
   };
 
   // Produce a duplicate-free version of the array.
-  _.uniq = function(array, isSorted, iterator=function(x){return x;}) {
+  _.uniq = function(array, isSorted, iterator=_.identity) {
     var seen = {};
     var result = [];
     for (var i = 0; i < array.length; i++){
@@ -128,8 +128,10 @@
     //Can take in an array or a dict
 
     var results = [];
-    _.each(collection, function(x){results.push(iterator(x));})
-    return results
+    _.each(collection, function(x){
+      results.push(iterator(x));
+    });
+    return results;
   };
 
   /*
@@ -173,14 +175,14 @@
   _.reduce = function(collection, iterator, accumulator) {
     var lastResult = accumulator;
     var skipFirst = false;
-    if (accumulator == undefined){
+    if (accumulator === undefined){
       skipFirst = true;
       lastResult = collection[0];
     }
 
-    _.each(collection, function(x,index){
-      if (!(skipFirst == true && index === 0)){
-        lastResult = iterator(lastResult,x);
+    _.each(collection, function(item, index){
+      if (!(skipFirst === true && index === 0)){
+        lastResult = iterator(lastResult, item);
       }
     });
     return lastResult;
@@ -241,7 +243,6 @@
   //   }); // obj1 now contains key1, key2, key3 and bla
   //source is old object, destination is new object
   _.extend = function(destination, source) {
-
     for (var i = 1; i < arguments.length; i++){
       _.each(arguments[i], function(value, key) {
         destination[key] = value;
@@ -253,14 +254,13 @@
   // Like extend, but doesn't ever overwrite a key that already
   // exists in obj
   _.defaults = function(object, defaults) {
-
     for (var i = 1; i < arguments.length; i++){
       _.each(arguments[i], function(value, key) {
         if (!(key in object)){
           object[key] = value;
-        };
+        }
       });
-    };
+    }
     return object;
   };
 
@@ -308,7 +308,6 @@
   _.memoize = function(func) {
     //Create dictionary to store previous results with the argument(s) as key
     var previousResults = {};
-    var previousKeys = [];
     var result; 
 
     return function() {
@@ -318,7 +317,7 @@
       } else {
           result = func.apply(this, arguments);
           previousResults[currentKey] = result;
-        };
+        }
       return result;
     };
   };
